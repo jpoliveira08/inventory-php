@@ -25,6 +25,7 @@ services:
     restart: unless-stopped
     tty: true
     volumes:
+      - ./docker/dump:/docker-entrypoint-initdb.d
       - ./docker/database:/var/lib/mysql:rw
     ports:
       - "3309:3306"
