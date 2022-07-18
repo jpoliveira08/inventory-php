@@ -8,4 +8,5 @@ interface PriceRepositoryInterface
 {
     public function createPrice(array $priceDetails);
     public function getPriceById(int $id);
+    public function updatePrice(array $newPriceDetails): bool;
 }

@@ -24,9 +24,9 @@ class PriceRepository implements PriceRepositoryInterface
      * Responsible for create a record in price table's.
      *
      * @param array $priceDetails
-     * @return void
+     * @return mixed
      */
-    public function createPrice(array $priceDetails)
+    public function createPrice(array $priceDetails): mixed
     {
         $query = 'INSERT INTO prices (`value`) VALUES (:value)';
         $stmt = $this->connection->prepare($query);
@@ -50,5 +50,21 @@ class PriceRepository implements PriceRepositoryInterface
         $price = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return $price;
+    }
+
+    /**
+     * Responsible for update a price
+     *
+     * @param array $newPriceDetails
+     * @return boolean
+     */
+    public function updatePrice(array $newPriceDetails): bool
+    {
+        $query = 'UPDATE prices SET value = :value WHERE id = :id';
+        $stmt = $this->connection->prepare($query);
+        $stmt->bindValue(':value', $newPriceDetails['value'], PDO::PARAM_STR);
+        $stmt->bindValue(':id', $newPriceDetails['id'], PDO::PARAM_INT);
+        
+        return $stmt->execute();
     }
 }
