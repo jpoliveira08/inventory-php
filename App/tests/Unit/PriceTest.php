@@ -50,17 +50,11 @@ class PriceTest extends TestCase
         ];
 
         $priceRepository = $this->createMock(PriceRepository::class);
-        $newPriceData = [
-            'id' => 1,
-            'value' => 10.00
-        ];
+
 
         $priceRepository->method('updatePrice')
-            ->willReturn($newPriceData);
+            ->willReturn(true);
         
-        $this->assertEquals(
-            $newPriceData, 
-            $priceRepository->updatePrice($oldPriceData)
-        );
+        $this->assertTrue($priceRepository->updatePrice($oldPriceData));
     }
 }

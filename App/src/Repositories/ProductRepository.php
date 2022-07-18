@@ -53,4 +53,21 @@ class ProductRepository implements ProductRepositoryInterface
 
         return $stmt->execute();
     }
+
+    public function getAllProducts(): array
+    {
+        $query = 'SELECT FROM products';
+        $stmt = $this->connection->query($query);
+
+        return $stmt->fetchAll();
+    }
+
+    public function deleteProduct(int $productId): bool
+    {
+        $query = 'DELETE FROM products WHERE id = :id';
+        $stmt = $this->connection->prepare($query);
+        $stmt->bindValue(':id', $productId);
+
+        return $stmt->execute();
+    }
 }

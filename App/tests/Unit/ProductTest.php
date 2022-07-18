@@ -73,25 +73,28 @@ class ProductTest extends TestCase
         
         $productRepository = $this->createMock(ProductRepository::class);
 
-        $newProductData = [
-            'id' => 1,
-            'price_id' => 1,
-            'name' => 'Old Product Name',
-            'color' => 'Green'
-        ];
-
         $productRepository->method('updateProduct')
-            ->willReturn($newProductData);
+            ->willReturn(true);
         
-        $this->assertEquals(
-            $newProductData,
-            $productRepository->updateProduct($oldProductData)
-        );
+
+        $this->assertTrue($productRepository->updateProduct($oldProductData));
     }
     
     /** @test */
     public function it_can_delete_a_product()
     {
+        $product1 = [
+            'id' => 1,
+            'price_id' => 1,
+            'name' => 'Product One',
+            'color' => 'Blue'
+        ];
+        
+        $productRepository = $this->createMock(ProductRepository::class);
 
+        $productRepository->method('deleteProduct')
+            ->willReturn(true);
+
+        $this->assertTrue($productRepository->deleteProduct($product1['id']));
     }
 }
