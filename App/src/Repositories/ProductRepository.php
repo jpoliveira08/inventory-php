@@ -39,7 +39,7 @@ class ProductRepository implements ProductRepositoryInterface
         return $this->connection->lastInsertId();
     }
 
-    public function updateProduct(array $newProductDetails): bool
+    public function updateProduct(array $newProductDetails, int $productId): bool
     {
         $this->priceRepository->updatePrice([
             'id' => $newProductDetails['price_id'],
@@ -51,7 +51,7 @@ class ProductRepository implements ProductRepositoryInterface
         $stmt = $this->connection->prepare($query);
         $stmt->bindValue(':name', $newProductDetails['name']);
         $stmt->bindValue(':color', $newProductDetails['color']);
-        $stmt->bindValue(':id', $newProductDetails['id']);
+        $stmt->bindValue(':id', $productId);
 
         return $stmt->execute();
     }
@@ -98,15 +98,14 @@ class ProductRepository implements ProductRepositoryInterface
         $stmt->bindValue(':id', $productId);
         $stmt->execute();
         $productData = $stmt->fetch(PDO::FETCH_ASSOC);
+
         if (empty($productData)) {
             return [];
         }
         
         $priceData = $this->priceRepository->getPriceById($productData['price_id']);
 
-        unset($productData['price_id']);
-
-        return array_merge($productData, ['value' => $priceData['value']]);
+        return array_merge($productData, $priceData);
     }
 
     public function deleteProduct(int $productId): bool

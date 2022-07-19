@@ -10,7 +10,7 @@ use Inventory\Services\PaginationService;
 interface ProductRepositoryInterface
 {
     public function createProduct(array $productDetails): mixed;
-    public function updateProduct(array $newProductDetails): bool;
+    public function updateProduct(array $newProductDetails, int $productId): bool;
     public function getProductsPaginated(
         Request $request, 
         ?PaginationService &$paginationService

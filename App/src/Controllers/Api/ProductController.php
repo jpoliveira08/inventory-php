@@ -54,7 +54,13 @@ class ProductController extends Api
         return $product;
     }
 
-    public function setNewProduct(Request $request)
+    /**
+     * Responsible for create a new product
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function setNewProduct(Request $request): array
     {
         $postVars = $request->getPostVars();
         $request->getRouter()->setContentType('application/json');
@@ -75,6 +81,43 @@ class ProductController extends Api
         return [
             "type" => "success",
             "productId" => $newPRoductId
+        ];
+    }
+
+    public function updateProduct(Request $request, int $productId)
+    {
+        $postVars = $request->getPostVars();
+        $request->getRouter()->setContentType('application/json');
+        if (
+            !isset($postVars['name']) ||
+            !isset($postVars['color']) ||
+            !isset($postVars['value'])
+        ) {
+            throw new Exception("The fields 'name', 'color' and 'value' are requireds", 400);
+        }
+        
+        if (!is_numeric($postVars['value'])) {
+            throw new Exception("The value must be a numeric value", 400);
+        }
+
+        $product = $this->productRepository->getProductById($productId);
+
+        if (empty($product)) {
+            throw new Exception('Product Not Found', 404);
+        }
+
+        $update = $this->productRepository->updateProduct(
+            array_merge($postVars, ['price_id' => $product['price_id']]), 
+            $productId
+        );
+
+        if (!$update) {
+            throw new Exception("Error updating the product", 500);
+        }
+
+        return [
+            "type" => "success",
+            "productId" => "Product updated successfully"
         ];
     }
 }

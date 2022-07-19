@@ -30,10 +30,21 @@ $router->get('/api/v1/products/{id}', [
 
 // Create product
 $router->post('/api/v1/products', [
-    function ($request, $id) use ($productController){
+    function ($request) use ($productController){
         return new Response(
             201,
             $productController->setNewProduct($request), 
+            'application/json'
+        );
+    }
+]);
+
+// Update product
+$router->put('/api/v1/products/{id}', [
+    function ($request, $id) use ($productController){
+        return new Response(
+            200,
+            $productController->updateProduct($request, (int) $id), 
             'application/json'
         );
     }
