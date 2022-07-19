@@ -16,3 +16,14 @@ $router->get('/api/v1/products', [
         );
     }
 ]);
+
+// Query for individual product
+$router->get('/api/v1/products/{id}', [
+    function ($request, $id) use ($productController){
+        return new Response(
+            200,
+            $productController->getProduct($request, (int) $id), 
+            'application/json'
+        );
+    }
+]);

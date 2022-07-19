@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Inventory\Controllers\Api;
 
+use Exception;
 use Inventory\Http\Request;
 use Inventory\Repositories\ProductRepository;
 use Inventory\Services\PaginationService;
@@ -31,5 +32,25 @@ class ProductController extends Api
             ),
             'pagination' => parent::getPagination($request, $paginationService),
         ];
+    }
+
+    /**
+     * Responsible for return data from one product
+     *
+     * @param Request $request
+     * @param integer $id
+     * @return array
+     */
+    public function getProduct(Request $request, int $id): array
+    {
+        // Search for the product
+        $product = $this->productRepository->getProductById($id);
+        $request->getRouter()->setContentType('application/json');
+        
+        if (empty($product)) {
+            throw new Exception('Product Not Found', 404);
+        }
+        
+        return $product;
     }
 }

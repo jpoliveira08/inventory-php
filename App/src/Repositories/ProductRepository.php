@@ -90,6 +90,25 @@ class ProductRepository implements ProductRepositoryInterface
         return $products;
     }
 
+
+    public function getProductById(int $productId): array
+    {
+        $query = 'SELECT * FROM products WHERE id = :id LIMIT 1';
+        $stmt = $this->connection->prepare($query);
+        $stmt->bindValue(':id', $productId);
+        $stmt->execute();
+        $productData = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (empty($productData)) {
+            return [];
+        }
+        
+        $priceData = $this->priceRepository->getPriceById($productData['price_id']);
+
+        unset($productData['price_id']);
+
+        return array_merge($productData, ['value' => $priceData['value']]);
+    }
+
     public function deleteProduct(int $productId): bool
     {
         $query = 'DELETE FROM products WHERE id = :id';

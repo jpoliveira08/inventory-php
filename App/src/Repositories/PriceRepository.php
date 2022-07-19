@@ -47,7 +47,8 @@ class PriceRepository implements PriceRepositoryInterface
         $query = 'SELECT * FROM prices WHERE id = :id LIMIT 1';
         $stmt = $this->connection->prepare($query);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-        $price = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt->execute();
+        $price = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return $price;
     }

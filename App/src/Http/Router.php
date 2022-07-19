@@ -22,11 +22,25 @@ class Router
     /** @var Request Request instance */
     private Request $request;
 
+    /** @var string Content Type */
+    private string $contentType = 'text/html';
+
     public function __construct(string $url)
     {
-        $this->request = new Request();
+        $this->request = new Request($this);
         $this->url = $url;
         $this->setPrefix();
+    }
+
+    /**
+     * Set Content Type
+     *
+     * @param string $contentType
+     * @return void
+     */
+    public function setContentType(string $contentType): void
+    {
+        $this->contentType = $contentType;
     }
 
     /**
@@ -133,7 +147,7 @@ class Router
         
         $xUri = strlen($this->prefix) ? explode($this->prefix, $uri) : [$uri];
 
-        return end($xUri);
+        return rtrim(end($xUri), '/');
     }
 
     /**
@@ -196,7 +210,24 @@ class Router
             // Returns the function execution
             return call_user_func_array($route['controller'], $args);
         } catch (Exception $e) {
-            return new Response($e->getCode(), $e->getMessage());
+            return new Response(
+                $e->getCode(),
+                $this->getErrorMessage($e->getMessage()),
+                $this->contentType
+            );
+        }
+    }
+
+    private function getErrorMessage(string $message)
+    {
+        switch ($this->contentType) {
+            case 'application/json':
+                return [
+                    'type' => 'error',
+                    'message' => $message
+                ];
+            default:
+                return $message;
         }
     }
 }

@@ -6,6 +6,9 @@ namespace Inventory\Http;
 
 class Request
 {
+    /** @var Router  */
+    private Router $router;
+
     /** @var string Http method of the request */
     private string $httpMethod;
 
@@ -21,13 +24,19 @@ class Request
     /** @var array Headers of the request */
     private array $headers;
 
-    public function __construct()
+    public function __construct(Router $router)
     {
+        $this->router = $router;
         $this->queryParams = $_GET ?? [];
         $this->postVars = $_POST ??[];
         $this->headers = getallheaders();
         $this->httpMethod = $_SERVER['REQUEST_METHOD'] ?? '';
         $this->uri = $_SERVER['REQUEST_URI'] ?? '';
+    }
+
+    public function getRouter(): Router
+    {
+        return $this->router;
     }
 
     /**
