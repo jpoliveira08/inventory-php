@@ -84,7 +84,14 @@ class ProductController extends Api
         ];
     }
 
-    public function updateProduct(Request $request, int $productId)
+    /**
+     * Responsible for updated a product
+     *
+     * @param Request $request
+     * @param integer $productId
+     * @return array
+     */
+    public function updateProduct(Request $request, int $productId): array
     {
         $postVars = $request->getPostVars();
         $request->getRouter()->setContentType('application/json');
@@ -117,7 +124,34 @@ class ProductController extends Api
 
         return [
             "type" => "success",
-            "productId" => "Product updated successfully"
+            "message" => true
+        ];
+    }
+
+    /**
+     * Responsible for delete a product
+     *
+     * @param Request $request
+     * @param integer $productId
+     * @return array
+     */
+    public function deleteProduct(Request $request, int $productId): array
+    {
+        $product = $this->productRepository->getProductById($productId);
+
+        if (empty($product)) {
+            throw new Exception('Product Not Found', 404);
+        }
+
+        $delete = $this->productRepository->deleteProduct($productId);
+
+        if (!$delete) {
+            throw new Exception("Error deleting the product", 500);
+        }
+
+        return [
+            "type" => "success",
+            "message" => true
         ];
     }
 }

@@ -49,3 +49,14 @@ $router->put('/api/v1/products/{id}', [
         );
     }
 ]);
+
+// Delete product
+$router->delete('/api/v1/products/{id}', [
+    function ($request, $id) use ($productController){
+        return new Response(
+            200,
+            $productController->deleteProduct($request, (int) $id), 
+            'application/json'
+        );
+    }
+]);
