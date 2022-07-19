@@ -24,7 +24,7 @@ class ProductRepository implements ProductRepositoryInterface
     public function createProduct(array $productDetails): mixed
     {
         $priceId = $this->priceRepository->createPrice(
-            $productDetails['value']
+            ['value' => $productDetails['value']]
         );
 
         $query = 'INSERT INTO `products` (`price_id`, `name`, `color`)

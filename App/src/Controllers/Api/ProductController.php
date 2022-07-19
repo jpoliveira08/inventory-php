@@ -53,4 +53,28 @@ class ProductController extends Api
         
         return $product;
     }
+
+    public function setNewProduct(Request $request)
+    {
+        $postVars = $request->getPostVars();
+        $request->getRouter()->setContentType('application/json');
+        if (
+            !isset($postVars['name']) ||
+            !isset($postVars['color']) ||
+            !isset($postVars['value'])
+        ) {
+            throw new Exception("The fields 'name', 'color' and 'value' are requireds", 400);
+        }
+        
+        if (!is_numeric($postVars['value'])) {
+            throw new Exception("The value must be a numeric value", 400);
+        }
+
+        $newPRoductId = $this->productRepository->createProduct($postVars);
+
+        return [
+            "type" => "success",
+            "productId" => $newPRoductId
+        ];
+    }
 }

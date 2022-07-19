@@ -27,3 +27,14 @@ $router->get('/api/v1/products/{id}', [
         );
     }
 ]);
+
+// Create product
+$router->post('/api/v1/products', [
+    function ($request, $id) use ($productController){
+        return new Response(
+            201,
+            $productController->setNewProduct($request), 
+            'application/json'
+        );
+    }
+]);
