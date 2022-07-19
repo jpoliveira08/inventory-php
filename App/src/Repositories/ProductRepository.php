@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Inventory\Repositories;
 
+use Inventory\Http\Request;
 use Inventory\Interfaces\ProductRepositoryInterface;
 use Inventory\Persistence\ConnectionCreator;
+use Inventory\Services\PaginationService;
 use PDO;
 
 class ProductRepository implements ProductRepositoryInterface
@@ -54,12 +56,38 @@ class ProductRepository implements ProductRepositoryInterface
         return $stmt->execute();
     }
 
-    public function getAllProducts(): array
-    {
-        $query = 'SELECT FROM products';
-        $stmt = $this->connection->query($query);
+    public function getProductsPaginated(
+        Request $request, 
+        ?PaginationService &$paginationService
+    ): array {
+        $products = [];
 
-        return $stmt->fetchAll();
+        $queryForAmountOfProducts = 'SELECT COUNT(`id`) AS amount FROM products';
+        $stmt = $this->connection->query($queryForAmountOfProducts);
+        
+        $amountOfProducts = $stmt->fetchObject()->amount;
+        
+        $queryParams = $request->getQueryParams();
+        $currentPage = $queryParams['page'] ?? 1;
+
+        $paginationService = new PaginationService($amountOfProducts, $currentPage, 10);
+        $queryForGetDataWithPagination = 'SELECT * FROM products ORDER BY id ASC LIMIT ' . $paginationService->getLimit();
+        
+        $stmtForPagination = $this->connection->query(
+            $queryForGetDataWithPagination
+        );
+
+        
+        while($product = $stmtForPagination->fetchObject()) {
+            $products[] = [
+                'id' => $product->id,
+                'price_id' => $product->price_id,
+                'name' => $product->name,
+                'color' => $product->color
+            ];
+        }
+
+        return $products;
     }
 
     public function deleteProduct(int $productId): bool

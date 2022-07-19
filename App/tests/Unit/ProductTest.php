@@ -55,10 +55,10 @@ class ProductTest extends TestCase
 
         $productRepository = $this->createMock(ProductRepository::class);
 
-        $productRepository->method('getAllProducts')
+        $productRepository->method('getProductsPaginated')
             ->willReturn([$product1, $product2]) ;
 
-        $this->assertEquals($allProducts, $productRepository->getAllProducts());
+        $this->assertEquals($allProducts, $productRepository->getProductsPaginated());
     }
     
     /** @test */
